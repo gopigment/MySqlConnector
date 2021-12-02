@@ -288,7 +288,7 @@ public sealed class MySqlParameter : DbParameter, IDbDataParameter, ICloneable
 			var length = inputSpan.Length + BinaryBytes.Length + 1;
 			foreach (var by in inputSpan)
 			{
-				if (by is 0x27 || by is 0x5C && !noBackslashEscapes)
+				if (by is 0x27 || by is 0x5C && !noBackslashEscapes || by is 0x00)
 					length++;
 			}
 
@@ -297,9 +297,17 @@ public sealed class MySqlParameter : DbParameter, IDbDataParameter, ICloneable
 			var index = BinaryBytes.Length;
 			foreach (var by in inputSpan)
 			{
-				if (by is 0x27 || by is 0x5C && !noBackslashEscapes)
+				if (by is 0x00)
+				{
+					outputSpan[index++] = (byte) '\\';
+					outputSpan[index++] = (byte) '0';
+				}
+				else
+				{
+					if (by is 0x27 || by is 0x5C && !noBackslashEscapes)
+						outputSpan[index++] = by;
 					outputSpan[index++] = by;
-				outputSpan[index++] = by;
+				}
 			}
 			outputSpan[index++] = 0x27;
 			Debug.Assert(index == length, "index == length");
@@ -394,9 +402,17 @@ public sealed class MySqlParameter : DbParameter, IDbDataParameter, ICloneable
 				writer.Write(BinaryBytes);
 				foreach (var by in bytes)
 				{
-					if (by is 0x27 or 0x5C)
-						writer.Write((byte) 0x5C);
-					writer.Write(by);
+					if (by is 0x00)
+					{
+						writer.Write((byte) '\\');
+						writer.Write((byte) '0');
+					}
+					else
+					{
+						if (by is 0x27 or 0x5C)
+							writer.Write((byte) 0x5C);
+						writer.Write(by);
+					}
 				}
 				writer.Write((byte) '\'');
 			}

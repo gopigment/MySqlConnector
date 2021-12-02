@@ -316,7 +316,7 @@ internal sealed class ServerSession
 			// In order to handle this case, we issue a dummy query that will consume the pending cancellation.
 			// See https://bugs.mysql.com/bug.php?id=45679
 			Log.Debug("Session{0} sending 'DO SLEEP(0)' command to clear pending cancellation", m_logArguments);
-			var payload = QueryPayload.Create(SupportsQueryAttributes, "DO SLEEP(0);");
+			var payload = QueryPayload.Create(SupportsQueryAttributes, "SELECT SLEEP(0) INTO @dummy;");
 #pragma warning disable CA2012 // Safe because method completes synchronously
 			SendAsync(payload, IOBehavior.Synchronous, CancellationToken.None).GetAwaiter().GetResult();
 			payload = ReceiveReplyAsync(IOBehavior.Synchronous, CancellationToken.None).GetAwaiter().GetResult();
@@ -1200,7 +1200,7 @@ internal sealed class ServerSession
 						await namedPipeStream.ConnectAsync(timeout, cancellationToken).ConfigureAwait(false);
 					else
 #endif
-						namedPipeStream.Connect(timeout);
+					namedPipeStream.Connect(timeout);
 				}
 				catch (Exception ex) when ((ex is ObjectDisposedException && cancellationToken.IsCancellationRequested) || ex is TimeoutException)
 				{
