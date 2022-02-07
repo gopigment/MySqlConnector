@@ -13,6 +13,12 @@
     <Nullable>enable</Nullable>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Seems to cause conflicts sometimes with our other projects:
+    "CS8032 An instance of analyzer Microsoft.CodeAnalysis.X cannot be created from".
+    Could be the old target frameworks. This an external project anyway.
+    -->
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net461' OR '$(TargetFramework)' == 'net471' ">
