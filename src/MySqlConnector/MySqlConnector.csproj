@@ -13,6 +13,9 @@
     <Nullable>enable</Nullable>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Nullable and TreatWarningsAsErrors conflicts with our monorepo general config -->
+    <Nullable>disable</Nullable>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net461' OR '$(TargetFramework)' == 'net471' ">
